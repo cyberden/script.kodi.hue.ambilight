@@ -24,6 +24,7 @@
     <string id="2110">Temps d'Atténuation</string>
     <string id="2120">Temps d'Atténuation Proportionnel</string>
     <string id="2130">Exemple: Prend 70% de temps de transition si Atténuation 70%</string>
+	<string id="2140">Activer pour la télévision</string>
 
     <string id="2200">Démarrage de la lecture (ou Reprise)</string>
     <string id="2210">Prendre le Contrôle de la luminosité (défaut 30)</string>

@@ -103,16 +103,41 @@ class MyPlayer(xbmc.Player):
     def __init__(self):
         xbmclog('Kodi Hue: In MyPlayer.__init__()')
         xbmc.Player.__init__(self)
-
+    
+    def playing_type(self):
+        isMovie = False
+        if xbmc.getCondVisibility('VideoPlayer.Content(movies)'):
+            isMovie = True
+        try:
+            filename = self.getPlayingFile()
+        except RuntimeError:
+            filename = ''
+        
+        if filename != '':
+            xbmclog('Kodi Hue: playing type filename : {}'.format(filename))
+            if filename[0:3] == 'pvr':
+                return 'pvr'
+        if isMovie:
+            return 'movie'
+        elif xbmc.getCondVisibility('VideoPlayer.Content(episodes)'):
+            # Check for tv show title and season to make sure it's really an episode
+            if xbmc.getInfoLabel('VideoPlayer.Season') != "" and xbmc.getInfoLabel('VideoPlayer.TVShowTitle') != "":
+                return 'episode'
+        elif xbmc.getCondVisibility('Player.IsInternetStream'):
+            return 'stream'
+        else:
+            return 'unknown'
+        
     def onPlayBackStarted(self):
-        xbmclog('Kodi Hue: In MyPlayer.onPlayBackStarted()')
+        xbmclog('Kodi Hue: In MyPlayer.onPlayBackStarted() - {}'.format(self.playing_type()))
         playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
         self.playlistlen = playlist.size()
         self.playlistpos = playlist.getposition()
         self.playingvideo = True
         self.duration = self.getTotalTime()
-        state_changed("started", self.duration)
-
+        if hue.settings.enabled_for_pvr or self.playing_type() not in ['pvr']:
+            state_changed("started", self.duration)
+        
     def onPlayBackPaused(self):
         xbmclog('Kodi Hue: In MyPlayer.onPlayBackPaused()')
         state_changed("paused", self.duration)
@@ -120,8 +145,10 @@ class MyPlayer(xbmc.Player):
             self.playingvideo = False
 
     def onPlayBackResumed(self):
-        xbmclog('Kodi Hue: In MyPlayer.onPlayBackResume()')
-        state_changed("resumed", self.duration)
+        xbmclog('Kodi Hue: In MyPlayer.onPlayBackResume() - {}'.format(self.playing_type()))
+        if hue.settings.enabled_for_pvr or self.playing_type() not in ['pvr']:
+            state_changed("resumed", self.duration)
+        
         if self.isPlayingVideo():
             self.playingvideo = True
             if self.duration == 0:
@@ -256,7 +283,7 @@ def run():
                         )
                         for i in range(len(hue.ambilight_controller.lights)):
                             algorithm.transition_colorspace(
-                                hue, list(hue.ambilight_controller.lights.values())[i], list(hsv_ratios)[i], )
+                                hue, hue.ambilight_controller.lights.values()[i], hsv_ratios[i], )
                 except ZeroDivisionError:
                     pass
 

@@ -24,6 +24,7 @@
     <string id="2110">Dim Time</string>
     <string id="2120">Proportional Dim Time</string>
     <string id="2130">Example: Take 70% of transition time if dimming 70%</string>
+	<string id="2140">Activate for live TV</string>
 
     <string id="2200">Playback Start (or Resume)</string>
     <string id="2210">Override Brightness (default 30)</string>

@@ -21,10 +21,11 @@ class Settings():
         self.theater_group = __addon__.getSetting("theater_group")
         self.theater_subgroup = __addon__.getSetting("theater_subgroup")
         self.static_group = __addon__.getSetting("static_group")
-
+        
         self.dim_time = int(float(__addon__.getSetting("dim_time"))*10)
         self.proportional_dim_time = __addon__.getSetting("proportional_dim_time") == "true"
-
+        self.enabled_for_pvr = __addon__.getSetting("enabled_for_pvr") == "true"
+        
         self.theater_start_bri_override = __addon__.getSetting("theater_start_bri_override") == "true"
         self.theater_start_bri = int(__addon__.getSetting("theater_start_bri").split(".")[0])
 
@@ -71,7 +72,7 @@ class Settings():
 
     def update(self, **kwargs):
         self.__dict__.update(**kwargs)
-        for k, v in kwargs.items():
+        for k, v in kwargs.iteritems():
             __addon__.setSetting(k, str(v))
 
     def __repr__(self):

@@ -24,6 +24,7 @@
     <string id="2110">Tiempo de atenuación</string>
     <string id="2120">Tiempo de atenuación proporcional</string>
     <string id="2130">(Ejemplo: Usa el 70% del tiempo si atenuamos las luces al 70%)</string>
+	<string id="2140">Activate for live TV</string>
 
     <string id="2200">Comportamiento durante la reproducción</string>
     <string id="2210">Ignorar valor de intensidad inicial (por defecto: 30)</string>

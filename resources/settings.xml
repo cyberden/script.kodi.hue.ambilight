@@ -34,6 +34,7 @@
         <setting id="setup_theater_subgroup" type="action" label="2105" action="RunScript(script.kodi.hue.ambilight,action=setup_theater_subgroup)" />
         <setting id="dim_time" label="2110" type="slider" default="4" range="0,0.5,10" option="float" />
         <setting id="proportional_dim_time" label="2120" type="bool" default="true" />
+        <setting id="enabled_for_pvr" label="2140" type="bool" default="true" />
         <setting id="propritional_explainer" type="lsep" label="2130" visible="eq(-1,true)" subsetting="true" />
 
         <!-- Playback Start -->
