@@ -39,11 +39,11 @@ class Light(object):
         except KeyError:
             self.livingwhite = True
 
-        self.init_on = spec['state']['on']
-        self.on = self.init_on
-
         self.lastResumeTime = None
         self.lastTransitionTime = 0
+
+        self.init_on = spec['state']['on']
+        self.on = self.init_on
 
         self.session = requests.Session()
 
@@ -83,6 +83,7 @@ class Light(object):
     def restore_initial_state(self, transition_time=0):
         self.lastTransitionTime = transition_time
         self.lastResumeTime = datetime.now()
+
         self.set_state(
             self.init_hue,
             self.init_sat,
@@ -119,6 +120,9 @@ class Controller(object):
         raise NotImplementedError(
             'on_playback_start must be implemented in the controller'
         )
+
+    def on_playback_resumed(self):
+        self.on_playback_start()
 
     def on_playback_pause(self):
         raise NotImplementedError(
