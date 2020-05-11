@@ -105,6 +105,7 @@ class MyPlayer(xbmc.Player):
         xbmc.Player.__init__(self)
     
     def playing_type(self):
+        substrings = ['-trailer', 'http://']
         isMovie = False
         if xbmc.getCondVisibility('VideoPlayer.Content(movies)'):
             isMovie = True
@@ -130,13 +131,14 @@ class MyPlayer(xbmc.Player):
         
     def onPlayBackStarted(self):
         xbmclog('Kodi Hue: In MyPlayer.onPlayBackStarted() - {}'.format(self.playing_type()))
-        playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
-        self.playlistlen = playlist.size()
-        self.playlistpos = playlist.getposition()
-        self.playingvideo = True
-        self.duration = self.getTotalTime()
-        if hue.settings.enabled_for_pvr or self.playing_type() not in ['pvr']:
-            state_changed("started", self.duration)
+        if self.playingvideo == False:
+            playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+            self.playlistlen = playlist.size()
+            self.playlistpos = playlist.getposition()
+            self.playingvideo = True
+            self.duration = self.getTotalTime()
+            if hue.settings.enabled_for_pvr or self.playing_type() not in ['pvr']:
+                state_changed("started", self.duration)
         
     def onPlayBackPaused(self):
         xbmclog('Kodi Hue: In MyPlayer.onPlayBackPaused()')
@@ -311,11 +313,18 @@ def state_changed(state, duration):
             capture_height = capture_width  # fix for divide by zero.
         capture.capture(int(capture_width), int(capture_height))
 
-    if state == "started" or state == "resumed":
+    if state == "started":
         ev.set()
         hue.theater_controller.on_playback_start()
         hue.ambilight_controller.on_playback_start()
         hue.static_controller.on_playback_start()
+        ev.clear()
+
+    if state == "resumed":
+        ev.set()
+        hue.theater_controller.on_playback_resumed()
+        hue.ambilight_controller.on_playback_resumed()
+        hue.static_controller.on_playback_resumed()
         ev.clear()
 
     elif state == "paused":
