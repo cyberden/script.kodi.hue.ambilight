@@ -22,6 +22,22 @@ class TheaterController(lights.Controller):
             force_on=self.settings.force_light_on,
         )
 
+    def on_playback_resumed(self):
+        # Let's keep only the last user-set state
+        # BUT! Avoid theater subgroup if enabled
+        subgroup = None
+        if self.settings.theater_pause_dim_subgroup:
+            subgroup = self.settings.theater_subgroup.split(',')
+
+        # Theater dimming
+        xbmclog('Kodi Hue: In TheaterController.on_playback_resume() '
+                'dimming theater group')
+                
+        self.set_state(
+            bri=self.settings.theater_start_bri,
+            force_on=self.settings.force_light_on,
+        )
+
     def on_playback_pause(self):
         if self.settings.theater_pause_dim_subgroup:
             xbmclog('Kodi Hue: In TheaterController.on_playback_pause() '
