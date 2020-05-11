@@ -105,6 +105,7 @@ class MyPlayer(xbmc.Player):
         xbmc.Player.__init__(self)
     
     def playing_type(self):
+        substrings = ['-trailer', 'http://']
         isMovie = False
         if xbmc.getCondVisibility('VideoPlayer.Content(movies)'):
             isMovie = True

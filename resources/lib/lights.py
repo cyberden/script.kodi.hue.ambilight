@@ -2,6 +2,7 @@ import json
 import requests
 
 from tools import xbmclog
+from datetime import datetime, timedelta
 
 
 class Light(object):
@@ -41,6 +42,9 @@ class Light(object):
         self.init_on = spec['state']['on']
         self.on = self.init_on
 
+        self.lastResumeTime = None
+        self.lastTransitionTime = 0
+
         self.session = requests.Session()
 
     def set_state(self, hue=None, sat=None, bri=None, on=None,
@@ -77,6 +81,8 @@ class Light(object):
             pass
 
     def restore_initial_state(self, transition_time=0):
+        self.lastTransitionTime = transition_time
+        self.lastResumeTime = datetime.now()
         self.set_state(
             self.init_hue,
             self.init_sat,
@@ -86,6 +92,13 @@ class Light(object):
         )
 
     def save_state_as_initial(self):
+        # if save state is called before the end of the last requested transition, the initial values are kept.
+        if self.lastResumeTime is not None:
+            elapsed = datetime.now() - self.lastResumeTime
+            #deciseconds to milliseconds
+            if elapsed < timedelta(milliseconds=self.lastTransitionTime * 100):
+                return
+
         self.init_hue = self.hue
         self.init_sat = self.sat
         self.init_bri = self.bri
